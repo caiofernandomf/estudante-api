@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.sql.SQLException;
-
 @ControllerAdvice
 public class EstudanteExceptionHandler {
 
@@ -60,38 +58,57 @@ public class EstudanteExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Object> handleException(Exception e)
             throws EstudanteNaoEncontradoException,
-            EstudanteDuplicadoException,ContaDuplicadaException{
+            EstudanteDuplicadoException,ContaDuplicadaException {
 
-        if(e instanceof DataIntegrityViolationException){
+        if (e instanceof DataIntegrityViolationException) {
             DataIntegrityViolationException dataIntegrityViolationException =
                     (DataIntegrityViolationException) e;
 
-            if(dataIntegrityViolationException.getCause() instanceof ConstraintViolationException){
+            if (dataIntegrityViolationException.getCause() instanceof ConstraintViolationException) {
 
-                if(((ConstraintViolationException)dataIntegrityViolationException.getCause()).getErrorCode() == 23505){
+                if (((ConstraintViolationException) dataIntegrityViolationException.getCause()).getErrorCode() == 23505) {
+                    String constraintMessage = dataIntegrityViolationException.getMessage().substring(
+                            dataIntegrityViolationException.getMessage().indexOf("constraint"));
 
-                    if(dataIntegrityViolationException.getMessage().contains("CONTA"))
-                        return handleContaDuplicadaException(new ContaDuplicadaException("Já existe dados bancários com esse número de conta cadastrado!!!"));
+                    if (dataIntegrityViolationException.getMessage().contains("CONTA"))
+                        return handleContaDuplicadaException(new ContaDuplicadaException("Já existe dados bancários com o número de conta "+ extractValue(constraintMessage)+" cadastrado!!!"));
 
-                    if(dataIntegrityViolationException.getMessage().contains("NOME"))
-                        return handleEstudanteDuplicadoException(new EstudanteDuplicadoException("Já existe um estudante com esse nome cadastrado"));
+                    if (dataIntegrityViolationException.getMessage().contains("NOME"))
+                        return handleEstudanteDuplicadoException(new EstudanteDuplicadoException("Já existe um estudante com o nome "+ extractValue(constraintMessage)+ " cadastrado"));
+
                 }
-            }
 
-            if(dataIntegrityViolationException.getCause() instanceof PropertyValueException){
+                if (dataIntegrityViolationException.getCause() instanceof PropertyValueException) {
 
-                PropertyValueException propertyValueException = (PropertyValueException) dataIntegrityViolationException.getCause();
+                    PropertyValueException propertyValueException = (PropertyValueException) dataIntegrityViolationException.getCause();
 
-                return handleCampoNuloException(
-                        new CampoNuloException(
-                                "Necessário informar o campo "
-                                +propertyValueException.getEntityName()
-                                        .substring(
-                                                propertyValueException.getEntityName()
-                                                        .lastIndexOf(".")+1)
-                                        +"."+propertyValueException.getPropertyName()));
+                    return handleCampoNuloException(
+                            new CampoNuloException(
+                                    "Necessário informar o campo "
+                                            + propertyValueException.getEntityName()
+                                            .substring(
+                                                    propertyValueException.getEntityName()
+                                                            .lastIndexOf(".") + 1)
+                                            + "." + propertyValueException.getPropertyName()));
+                }
             }
         }
         return null;
+    }
+
+    private String extractValue(String messageError){
+        if(messageError.contains("NOME")){
+            return messageError.substring(
+                    messageError.indexOf("'")-1,
+                    messageError.lastIndexOf("'")
+            );
+        }
+        if(messageError.contains("CONTA")){
+            return messageError.substring(
+                    messageError.indexOf("*/"),
+                    messageError.indexOf(")\";")
+            ).replaceAll("\\D","");
+        }
+        return "";
     }
 }
