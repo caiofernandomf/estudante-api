@@ -1,19 +1,16 @@
 package com.linuxtips.descomplicandojavespring.estudanteapi.service;
 
-import com.linuxtips.descomplicandojavespring.estudanteapi.exception.EstudanteDuplicadoException;
 import com.linuxtips.descomplicandojavespring.estudanteapi.exception.EstudanteNaoEncontradoException;
 import com.linuxtips.descomplicandojavespring.estudanteapi.model.Estudante;
 import com.linuxtips.descomplicandojavespring.estudanteapi.model.mapper.EstudanteMapper;
 import com.linuxtips.descomplicandojavespring.estudanteapi.repository.EstudamteRepository;
 import lombok.AllArgsConstructor;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

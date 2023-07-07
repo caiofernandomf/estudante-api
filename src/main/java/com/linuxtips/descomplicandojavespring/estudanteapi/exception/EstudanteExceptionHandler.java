@@ -50,7 +50,7 @@ public class EstudanteExceptionHandler {
     ){
         return
                 ResponseEntity
-                        .status(HttpStatus.CONFLICT)
+                        .status(HttpStatus.BAD_REQUEST)
                         .body(e.getMessage()+"\n"
                                 +e.getClass());
     }
