@@ -34,4 +34,16 @@ public class DadosBancarios {
     @OneToOne(mappedBy = "dadosBancarios")
     @JsonBackReference
     private Estudante estudante;
+
+    @Override
+    public String toString(){
+        StringBuilder retorno= new StringBuilder();
+        retorno.append("[id=").append(this.id).append(",");
+        retorno.append("agencia=").append(this.agencia).append(",");
+        retorno.append("conta=").append(this.conta).append(",");
+        retorno.append("digito=").append(this.digito).append(",");
+        retorno.append("tipoContaBancaria=").append(this.tipoContaBancaria).append("]");
+
+        return retorno.toString();
+    }
 }
