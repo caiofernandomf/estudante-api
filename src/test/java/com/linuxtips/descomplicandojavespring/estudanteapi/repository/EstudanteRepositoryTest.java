@@ -15,25 +15,24 @@ import java.util.Optional;
 
 
 @DataJpaTest
-//@DataJpaTest
-public class EstudamteRepositoryTest {
+public class EstudanteRepositoryTest {
     @Autowired
-    EstudamteRepository estudamteRepository;
+    EstudanteRepository estudanteRepository;
     List<Estudante> listaDeEstudantes;
     @BeforeEach
     public void iniciarRepository(){
-        listaDeEstudantes = estudamteRepository.saveAll(MockEstudante.mockData());
+        listaDeEstudantes = estudanteRepository.saveAll(MockEstudante.mockData());
     }
     @Test
     @DisplayName("Sucesso - Deve Listar todos os estudantes")
     void listarEstudantes(){
-        List<Estudante> lista = estudamteRepository.findAll();
+        List<Estudante> lista = estudanteRepository.findAll();
         Assertions.assertTrue(lista.size() > 0);
 
     }
 
     private Estudante insereEstudante(){
-        return estudamteRepository.save(MockEstudante.dadoParaCriarNovoEstudante());
+        return estudanteRepository.save(MockEstudante.dadoParaCriarNovoEstudante());
     }
     @Test
     @DisplayName("Sucesso - Deve inserir um novo registro")
@@ -46,10 +45,10 @@ public class EstudamteRepositoryTest {
     @Test
     @DisplayName("Erro - Deve retornar uma exception ao tentar inserir um novo registro")
     void inserirEstudanteComErro(){
-        Estudante estudante = estudamteRepository.save(MockEstudante.dadoParaCriarNovoEstudante());
+        Estudante estudante = estudanteRepository.save(MockEstudante.dadoParaCriarNovoEstudante());
 
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{
-            estudamteRepository.save(MockEstudante.dadoParaCriarNovoEstudanteComErro());
+            estudanteRepository.save(MockEstudante.dadoParaCriarNovoEstudanteComErro());
         });
 
     }
@@ -58,9 +57,9 @@ public class EstudamteRepositoryTest {
     @DisplayName("Sucesso - Deve excluir estudante na base com sucesso")
     void excluirEstudanteComSucesso(){
         Long idEstudante = listaDeEstudantes.get(0).getId();
-        estudamteRepository.deleteById(idEstudante);
+        estudanteRepository.deleteById(idEstudante);
 
-        Optional<Estudante> optional = estudamteRepository.findById(idEstudante);
+        Optional<Estudante> optional = estudanteRepository.findById(idEstudante);
 
         Assertions.assertFalse(optional.isPresent());
     }
@@ -68,7 +67,7 @@ public class EstudamteRepositoryTest {
     @Test
     @DisplayName("Sucesso - Deve buscar estudande pelo nome")
     void buscarEstudantePorNome(){
-        Optional<Estudante> optional = estudamteRepository.findByName("Caio");
+        Optional<Estudante> optional = estudanteRepository.findByName("Caio");
 
         Assertions.assertTrue(optional.isPresent());
 
@@ -77,7 +76,7 @@ public class EstudamteRepositoryTest {
     @Test
     @DisplayName("Sucesso - Deve buscar estudande pelo nome e curso")
     void buscarEstudantePorNomeEhCurso(){
-        List<Estudante> optional = estudamteRepository.findByNomeStartsWithAndCurso("Ayrton","Descomplicando o SQL");
+        List<Estudante> optional = estudanteRepository.findByNomeStartsWithAndCurso("Ayrton","Descomplicando o SQL");
 
         Assertions.assertTrue(optional.size()>0);
 
@@ -87,7 +86,7 @@ public class EstudamteRepositoryTest {
     @DisplayName("Sucesso - Deve buscar todos os estudande que contém nome")
     void buscarEstudanteContemNome(){
         insereEstudante();
-        List<Estudante> optional = estudamteRepository.findByNomeContains("Caio");
+        List<Estudante> optional = estudanteRepository.findByNomeContains("Caio");
 
         Assertions.assertTrue(optional.size()>0);
 
@@ -97,8 +96,20 @@ public class EstudamteRepositoryTest {
     @DisplayName("Sucesso - Deve buscar todos os estudande por Curso")
     void buscarEstudantePorCurso(){
         insereEstudante();
-        List<Estudante> optional = estudamteRepository.findByCurso("Descomplicando o Rust");
+        List<Estudante> optional = estudanteRepository.findByCurso("Descomplicando o Rust");
 
+        Assertions.assertTrue(optional.size()>0);
+
+    }
+
+    @Test
+    @DisplayName("Sucesso - Deve buscar todos os x primeiros estudantes")
+    void buscarPrimeirosEstudantes(){
+        insereEstudante();
+
+        List<Estudante> optional = estudanteRepository.findTops(2);
+
+        optional.forEach(System.out::println);
         Assertions.assertTrue(optional.size()>0);
 
     }
