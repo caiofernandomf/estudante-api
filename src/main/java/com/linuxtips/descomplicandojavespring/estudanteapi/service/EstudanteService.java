@@ -3,9 +3,8 @@ package com.linuxtips.descomplicandojavespring.estudanteapi.service;
 import com.linuxtips.descomplicandojavespring.estudanteapi.exception.EstudanteNaoEncontradoException;
 import com.linuxtips.descomplicandojavespring.estudanteapi.model.Estudante;
 import com.linuxtips.descomplicandojavespring.estudanteapi.model.mapper.EstudanteMapper;
-import com.linuxtips.descomplicandojavespring.estudanteapi.repository.EstudamteRepository;
+import com.linuxtips.descomplicandojavespring.estudanteapi.repository.EstudanteRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +15,12 @@ import java.util.List;
 @AllArgsConstructor
 public class EstudanteService {
 
-    private final EstudamteRepository estudamteRepository;
+    private final EstudanteRepository estudanteRepository;
     private final EstudanteMapper estudanteMapper;
 
     public Estudante criarEstudante(Estudante estudante)throws SQLException, Exception{
         try{
-            return estudamteRepository.save(estudante);
+            return estudanteRepository.save(estudante);
         }catch (Exception e){
             throw e;
                     //new EstudanteDuplicadoException("Estudante com o mesmo nome já cadastrado",e);
@@ -29,11 +28,11 @@ public class EstudanteService {
     }
 
     public List<Estudante> listarEstudantes(){
-        return estudamteRepository.findAll();
+        return estudanteRepository.findAll();
     }
 
     public ResponseEntity<Estudante> buscarEstudantePorId(long id) throws EstudanteNaoEncontradoException {
-        return estudamteRepository.findById(id)
+        return estudanteRepository.findById(id)
                 .map(estudante -> ResponseEntity.ok().body(estudante))
                 .orElseThrow(() -> new EstudanteNaoEncontradoException(id));
 
@@ -41,41 +40,41 @@ public class EstudanteService {
 
     public ResponseEntity<Estudante> atualizarEstudantePorId(Estudante estudante,long id)
             throws EstudanteNaoEncontradoException{
-        return  estudamteRepository.findById(id)
+        return  estudanteRepository.findById(id)
                 .map(estudanteToUpdate ->
                 {
                     estudanteMapper.toEstudanteUpdate(estudante, estudanteToUpdate);
-                    estudamteRepository.save(estudanteToUpdate);
+                    estudanteRepository.save(estudanteToUpdate);
                     return ResponseEntity.ok().body(estudanteToUpdate);
                 }).orElseThrow(() -> new EstudanteNaoEncontradoException(id));
 
     }
 
     public ResponseEntity<Object> excluirPorId(long id)throws EstudanteNaoEncontradoException{
-        return estudamteRepository.findById(id)
+        return estudanteRepository.findById(id)
                 .map(estudanteToDelete -> {
-                    estudamteRepository.delete(estudanteToDelete);
+                    estudanteRepository.delete(estudanteToDelete);
                     return ResponseEntity.noContent().build();
                 }).orElseThrow(() -> new EstudanteNaoEncontradoException(id));
     }
 
     public ResponseEntity<Estudante> buscarEstudantePorNome(String nome) throws EstudanteNaoEncontradoException{
         return
-                estudamteRepository.findByName(nome)
+                estudanteRepository.findByName(nome)
                         .map(estudante -> ResponseEntity.ok().body(estudante))
                         .orElseThrow(() -> new EstudanteNaoEncontradoException(nome));
     }
 
     public List<Estudante> listarEstudantesPorCurso(String curso){
-        return estudamteRepository.findByCurso(curso);
+        return estudanteRepository.findByCurso(curso);
     }
 
     public List<Estudante> listarEstudantesPorNome(String nome){
-        return estudamteRepository.findByNomeContains(nome);
+        return estudanteRepository.findByNomeContains(nome);
     }
 
     public List<Estudante> listarEstudantesPrimeirosEstudantes(int numero){
-        return estudamteRepository.findBy(Example.of(Estudante.builder().build()), q-> q.limit(numero)).all();
+        return estudanteRepository.findTops(numero);
     }
 
 }
