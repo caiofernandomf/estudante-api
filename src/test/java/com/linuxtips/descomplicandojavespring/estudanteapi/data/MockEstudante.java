@@ -45,8 +45,8 @@ public class MockEstudante {
     public static Estudante dadoParaCriarNovoEstudante(){
         return Estudante.builder()
                 .nome("Caio Fernando")
-                .curso("Descomplicando o Rust")
-                .endereco("Rua B")
+                .curso("Descomplicando o Go")
+                .endereco("Rua Z")
                 .dadosBancarios(
                         DadosBancarios
                                 .builder()
@@ -61,6 +61,24 @@ public class MockEstudante {
 
     public static Estudante dadoParaCriarNovoEstudanteComErro(){
         return Estudante.builder()
+                .nome("Fernando")
+                .curso("Descomplicando o Rust")
+                .endereco("Rua B")
+                .dadosBancarios(
+                        DadosBancarios
+                                .builder()
+                                .conta(123)
+                                .agencia(6872)
+                                .digito(7)
+                                .tipoContaBancaria(
+                                        TipoContaBancaria.SALARIO
+                                ).build())
+                .build();
+    }
+
+    public static Estudante dadoParaBuscarEstudante(){
+        return Estudante.builder()
+                .id(123l)
                 .nome("Fernando")
                 .curso("Descomplicando o Rust")
                 .endereco("Rua B")
