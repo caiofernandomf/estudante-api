@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "dados_bancarios")
 @NoArgsConstructor
@@ -45,5 +47,17 @@ public class DadosBancarios {
         retorno.append("tipoContaBancaria=").append(this.tipoContaBancaria).append("]");
 
         return retorno.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DadosBancarios that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(agencia, that.agencia) && Objects.equals(conta, that.conta) && Objects.equals(digito, that.digito) && tipoContaBancaria == that.tipoContaBancaria;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, agencia, conta, digito, tipoContaBancaria);
     }
 }

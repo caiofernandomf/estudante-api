@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -43,4 +44,16 @@ public class Estudante {
     @UpdateTimestamp
     @Column(updatable = true)
     private LocalDateTime atualizadoEm;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Estudante estudante)) return false;
+        return Objects.equals(id, estudante.id) && Objects.equals(nome, estudante.nome) && Objects.equals(endereco, estudante.endereco) && Objects.equals(dadosBancarios, estudante.dadosBancarios) && Objects.equals(curso, estudante.curso) && Objects.equals(criadoEm, estudante.criadoEm) && Objects.equals(atualizadoEm, estudante.atualizadoEm);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nome, endereco, dadosBancarios, curso, criadoEm, atualizadoEm);
+    }
 }
