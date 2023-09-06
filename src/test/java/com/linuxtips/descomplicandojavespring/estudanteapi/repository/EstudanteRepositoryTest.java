@@ -96,7 +96,7 @@ public class EstudanteRepositoryTest {
     @DisplayName("Sucesso - Deve buscar todos os estudande por Curso")
     void buscarEstudantePorCurso(){
         insereEstudante();
-        List<Estudante> optional = estudanteRepository.findByCurso("Descomplicando o Rust");
+        List<Estudante> optional = estudanteRepository.findByCurso("Descomplicando o Go");
 
         Assertions.assertTrue(optional.size()>0);
 
