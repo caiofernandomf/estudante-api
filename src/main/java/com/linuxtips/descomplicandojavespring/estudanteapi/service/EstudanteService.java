@@ -4,11 +4,14 @@ import com.linuxtips.descomplicandojavespring.estudanteapi.exception.EstudanteNa
 import com.linuxtips.descomplicandojavespring.estudanteapi.model.Estudante;
 import com.linuxtips.descomplicandojavespring.estudanteapi.model.mapper.EstudanteMapper;
 import com.linuxtips.descomplicandojavespring.estudanteapi.repository.EstudanteRepository;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -18,9 +21,19 @@ public class EstudanteService {
     private final EstudanteRepository estudanteRepository;
     private final EstudanteMapper estudanteMapper;
 
+    private final MeterRegistry meterRegistry;
+
     public Estudante criarEstudante(Estudante estudante)throws SQLException, Exception{
         try{
-            return estudanteRepository.save(estudante);
+            Timer criarEstudanteTimer=
+            Timer.builder("my_timer_criar_estudante")
+                    .publishPercentiles(0.5, 0.95) // median and 95th percentile (1)
+                    .publishPercentileHistogram() // (2)
+                    .serviceLevelObjectives(Duration.ofMillis(100)) // (3)
+                    .minimumExpectedValue(Duration.ofMillis(1)) // (4)
+                    .maximumExpectedValue(Duration.ofSeconds(10)).register(meterRegistry);
+            return criarEstudanteTimer.record(()->estudanteRepository.save(estudante));
+
         }catch (Exception e){
             throw e;
                     //new EstudanteDuplicadoException("Estudante com o mesmo nome já cadastrado",e);
